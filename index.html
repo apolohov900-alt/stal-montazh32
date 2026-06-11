@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Производство доборных элементов и облицовка зданий | Добрунь</title>
+    
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+
+    <style>
+        /* --- ПЕРЕМЕННЫЕ И ЦВЕТОВЫЕ ТЕМЫ --- */
+        :root {
+            --bg-main: #ffffff;
+            --bg-card: #f8f9fa;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --accent: #ff6b00; /* Строительный сигнальный оранжевый */
+            --accent-hover: #e05e00;
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --border: #e9ecef;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #121214;
+            --bg-card: #1a1a1e;
+            --text-main: #f8f9fa;
+            --text-muted: #a0a5ab;
+            --header-bg: rgba(18, 18, 20, 0.9);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --border: #2a2a30;
+        }
+
+        /* --- БАЗОВЫЕ СТИЛИ --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 90px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        /* --- КНОПКИ --- */
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        /* --- ИНТЕРАКТИВНАЯ АНИМАЦИЯ «ПОРЫВ ВЕТРА» --- */
+        .wind-fade {
+            opacity: 0;
+            transform: translateY(-60px);
+            filter: blur(10px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), 
+                        filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity, filter;
+        }
+
+        .wind-fade.wind-active {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+
+        /* --- ХЕДЕР (ШАПКА) --- */
+        header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: background 0.4s;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo span { color: var(--accent); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .phone-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .phone-link:hover {
+            color: var(--accent);
+        }
+
+        .theme-switch {
+            background: none;
+            border: 2px solid var(--border);
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        .theme-switch:hover {
+            border-color: var(--accent);
+        }
+
+        /* --- ГЛАВНЫЙ ЭКРАН --- */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') no-repeat center center / cover;
+            color: #fff;
+            padding-top: 80px;
+        }
+
+        .hero-content { max-width: 750px; }
+        .hero h1 { font-size: 3.5rem; line-height: 1.2; margin-bottom: 25px; text-transform: uppercase; }
+        .hero p { font-size: 1.2rem; margin-bottom: 40px; color: #e0e0e0; }
+
+        /* --- СЕТКИ И КАРТОЧКИ --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .card-img {
+            height: 230px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .img-konik { background-image: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80'); }
+        .img-otliv { background-image: url('https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=600&q=80'); }
+        .img-planka { background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80'); }
+        .img-obshivka { background-image: url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&q=80'); }
+        .img-montazh { background-image: url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80'); }
+        .img-zamer { background-image: url('https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=600&q=80'); }
+
+        .card-body { padding: 25px; }
+        .card-body h3 { font-size: 1.3rem; margin-bottom: 15px; text-transform: uppercase; }
+        .card-body p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* --- БЛОК ПРЕИМУЩЕСТВА --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .feature-item .icon { font-size: 3rem; color: var(--accent); margin-bottom: 15px; }
+        .feature-item h4 { font-size: 1.2rem; margin-bottom: 10px; }
+        .feature-item p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- ГАЛЕРЕЯ РАБОТ --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            height: 260px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item::after {
+            content: '🔍 Увеличить объект';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 107, 0, 0.85);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: 0.3s; font-weight: bold;
+        }
+
+        .gallery-item:hover::after { opacity: 1; }
+
+        /* --- МОДАЛЬНОЕ ОКНО ДЛЯ ПРОСМОТРА КАРТИНОК --- */
+        .modal {
+            display: none; /* Изначально скрыто */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 85%;
+            max-height: 85%;
+            border-radius: 4px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .modal-close:hover {
+            color: var(--accent);
+        }
+
+        /* --- ПОДВАЛ И КАРТА --- */
+        footer {
+            background: #111113;
+            color: #fff;
+            padding: 80px 0 30px 0;
+            border-top: 1px solid #2a2a30;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-info h3 { margin-bottom: 25px; color: var(--accent); text-transform: uppercase; }
+        .footer-info p { margin-bottom: 12px; color: #a0a5ab; display: flex; align-items: center; gap: 10px; font-size: 1.05rem; }
+        .footer-info a { color: #fff; text-decoration: none; transition: color 0.2s; font-weight: 600; }
+        .footer-info a:hover { color: var(--accent); }
+        
+        #map {
+            width: 100%;
+            height: 250px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #2a2a30;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #2a2a30;
+            color: #5c6166;
+            font-size: 0.9rem;
+        }
+
+        /* --- АДАПТИВНОСТЬ ДЛЯ СМАРТФОНОВ --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.3rem; }
+            .section-title { font-size: 1.9rem; }
+            section { padding: 60px 0; }
+            .modal-close { top: 15px; right: 20px; font-size: 35px; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <header>
+        <div class="container header-inner">
+            <div class="logo">Сталь<span>Монтаж</span></div>
+            <div class="header-right">
+                <a href="tel:+79605540757" class="phone-link">+7 (960) 554-07-57</a>
+                <button class="theme-switch" id="theme-toggle" title="Сменить тему">☀️</button>
+                <a href="#footer" class="btn">Связаться с нами</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content wind-fade">
+                <h1>Качественные доборные элементы и монтаж</h1>
+                <p>Производство доборных элементов для металлочерепицы и профессиональная обшивка зданий. Надежные материалы напрямую от производителя с установкой под ключ.</p>
+                <a href="#footer" class="btn">Связаться с нами</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="products">
+        <div class="container">
+            <h2 class="section-title wind-fade">Наши <span>изделия</span></h2>
+            <div class="grid-3">
+                <div class="card wind-fade delay-1">
+                    <div class="card-img img-konik"></div>
+                    <div class="card-body">
+                        <h3>Коньки кровельные</h3>
+                        <p>Идеальная геометрия для надежной защиты конькового стыка кровли от протечек, ветра и задувания снега.</p>
+                    </div>
+                </div>
+                <div class="card wind-fade delay-2">
+                    <div class="card-img img-otliv"></div>
+                    <div class="card-body">
+                        <h3>Отливы оконные и цокольные</h3>
+                        <p>Качественный отвод талой и дождевой воды. Защищают фундамент и стены от разрушения и влаги.</p>
+                    </div>
+                </div>
+                <div class="card wind-fade delay-3">
+                    <div class="card-img img-planka"></div>
+                    <div class="card-body">
+                        <h3>Защитные планки</h3>
+                        <p>Карнизные, торцевые и прижимные планки любого размера и цвета по палитре RAL для финишной отделки.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" style="background: var(--bg-card); transition: background 0.4s;">
+        <div class="container">
+            <h2 class="section-title wind-fade">Наши <span>Услуги</span></h2>
+            <div class="grid-3">
+                <div class="card wind-fade delay-1">
+                    <div class="card-img img-obshivka"></div>
+                    <div class="card-body">
+                        <h3>Обшивка и облицовка зданий</h3>
+                        <p>Профессиональный монтаж сайдинга, фасадных панелей и металлопрофиля с соблюдением технологий вентилируемого фасада.</p>
+                    </div>
+                </div>
+                <div class="card wind-fade delay-2">
+                    <div class="card-img img-montazh"></div>
+                    <div class="card-body">
+                        <h3>Надежный монтаж элементов</h3>
+                        <p>Установка кровельных доборов и отливов опытными мастерами. Гарантия жесткой фиксации и герметичности.</p>
+                    </div>
+                </div>
+                <div class="card wind-fade delay-3">
+                    <div class="card-img img-zamer"></div>
+                    <div class="card-body">
+                        <h3>Замеры и точный расчет</h3>
+                        <p>Выезжаем на объект для проведения точных замеров, подбора толщины металла и составления прозрачной сметы.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title wind-fade">Почему выбирают <span>нас</span></h2>
+            <div class="features-grid">
+                <div class="feature-item wind-fade delay-1">
+                    <div class="icon">🏭</div>
+                    <h4>Своё производство</h4>
+                    <p>Высокая точность гибки деталей и честная толщина листа.</p>
+                </div>
+                <div class="feature-item wind-fade delay-2">
+                    <div class="icon">🛡️</div>
+                    <h4>Гарантия качества</h4>
+                    <p>Только сертифицированная сталь с долговечным полимерным покрытием.</p>
+                </div>
+                <div class="feature-item wind-fade delay-3">
+                    <div class="icon">🔨</div>
+                    <h4>Опытный монтаж</h4>
+                    <p>Бригады строителей с профильным опытом облицовки от 5 лет.</p>
+                </div>
+                <div class="feature-item wind-fade delay-4">
+                    <div class="icon">⏱️</div>
+                    <h4>Сроки</h4>
+                    <p>Оперативное изготовление гибочных элементов по индивидуальным размерам.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" style="background: var(--bg-card); transition: background 0.4s;">
+        <div class="container">
+            <h2 class="section-title wind-fade">Галерея <span>работ</span></h2>
+            <div class="gallery-grid">
+                <div class="gallery-item wind-fade delay-1" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80')"></div>
+                <div class="gallery-item wind-fade delay-2" style="background-image: url('https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80')"></div>
+                <div class="gallery-item wind-fade delay-3" style="background-image: url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80')"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="gallery-modal">
+        <span class="modal-close" id="modal-close">&times;</span>
+        <img class="modal-content" id="modal-img" src="" alt="Увеличенный объект">
+    </div>
+
+    <footer id="footer">
+        <div class="container footer-grid">
+            <div class="footer-info">
+                <h3>СтальМонтаж</h3>
+                <p>Производство высококачественных доборных элементов и профессиональные фасадные решения.</p>
+                <p style="margin-top: 20px; font-size: 0.85rem; color: #5c6166;">© 2026 Все права защищены.</p>
+            </div>
+            <div class="footer-info">
+                <h4>Контакты</h4>
+                <p>📞 Тел: <a href="tel:+79605540757">+7 (960) 554-07-57</a></p>
+                <p>✉️ Email: <a href="mailto:apolohov900@mail.ru">apolohov900@mail.ru</a></p>
+                <p>📍 Адрес: Брянская область, Брянский район, д. Добрунь, д. 34</p>
+            </div>
+            <div class="footer-info">
+                <h4>Наше местоположение</h4>
+                <div id="map"></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            Все интерактивные элементы и галерея настроены.
+        </div>
+    </footer>
+
+    <script>
+        // 1. ПЕРЕКЛЮЧАТЕЛЬ СВЕТЛОЙ И ТЁМНОЙ ТЕМЫ
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                themeToggle.textContent = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️';
+            }
+        });
+
+        // 2. СКРОЛЛ-АНИМАЦИЯ «ПОРЫВ ВЕТРА»
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.12
+        };
+
+        const windObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('wind-active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.wind-fade').forEach(el => {
+            windObserver.observe(el);
+        });
+
+        // 3. ИНТЕРАКТИВНАЯ ГАЛЕРЕЯ (МОДАЛЬНОЕ ОКНО)
+        const modal = document.getElementById('gallery-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalClose = document.getElementById('modal-close');
+
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Извлекаем чистую ссылку на картинку из стиля background-image
+                const bgStyle = window.getComputedStyle(item).backgroundImage;
+                const imgUrl = bgStyle.slice(5, -2).replace(/"/g, "");
+                
+                modalImg.src = imgUrl;
+                modal.classList.add('show');
+            });
+        });
+
+        // Закрытие на крестик
+        modalClose.addEventListener('click', () => {
+            modal.classList.remove('show');
+        });
+
+        // Закрытие по клику на темную область вокруг картинки
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+
+        // 4. ИНТЕГРАЦИЯ ЯНДЕКС.КАРТЫ (д. Добрунь, д. 34)
+        ymaps.ready(init);
+        function init(){
+            var myMap = new ymaps.Map("map", {
+                center: [53.161171, 34.254117],
+                zoom: 14,
+                controls: ['zoomControl', 'fullscreenControl']
+            });
+
+            var myPlacemark = new ymaps.Placemark([53.161171, 34.254117], {
+                balloonContentHeader: '<strong>СтальМонтаж</strong>',
+                balloonContentBody: 'Производство доборных элементов и облицовка.',
+                balloonContentFooter: 'д. Добрунь, д. 34',
+                hintContent: 'Свяжитесь с нами!'
+            }, {
+                preset: 'islands#orangeConstructionIcon'
+            });
+
+            myMap.geoObjects.add(myPlacemark);
+            myMap.behaviors.disable('scrollZoom');
+        }
+    </script>
+</body>
+</html>

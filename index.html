@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Производство доборных элементов и облицовка зданий | Добрунь</title>
     
+    <!-- Подключаем API Яндекс.Карт для интерактивной карты -->
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 
     <style>
@@ -16,7 +17,7 @@
             --text-muted: #6c757d;
             --accent: #ff6b00; /* Строительный сигнальный оранжевый */
             --accent-hover: #e05e00;
-            --header-bg: rgba(255, 255, 255, 0.9);
+            --header-bg: rgba(255, 255, 255, 0.95);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             --border: #e9ecef;
         }
@@ -26,7 +27,7 @@
             --bg-card: #1a1a1e;
             --text-main: #f8f9fa;
             --text-muted: #a0a5ab;
-            --header-bg: rgba(18, 18, 20, 0.9);
+            --header-bg: rgba(18, 18, 20, 0.95);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             --border: #2a2a30;
         }
@@ -54,15 +55,16 @@
         }
 
         section {
-            padding: 90px 0;
+            padding: 80px 0;
         }
 
         .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 50px;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
+            line-height: 1.3;
         }
 
         .section-title span {
@@ -81,6 +83,7 @@
             text-decoration: none;
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
+            text-align: center;
         }
 
         .btn:hover {
@@ -91,11 +94,11 @@
         /* --- ИНТЕРАКТИВНАЯ АНИМАЦИЯ «ПОРЫВ ВЕТРА» --- */
         .wind-fade {
             opacity: 0;
-            transform: translateY(-60px);
+            transform: translateY(-40px);
             filter: blur(10px);
-            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), 
-                        filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform, opacity, filter;
         }
 
@@ -128,10 +131,11 @@
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
+            white-space: nowrap;
         }
 
         .logo span { color: var(--accent); }
@@ -139,15 +143,16 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
         }
 
         .phone-link {
             color: var(--text-main);
             text-decoration: none;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             transition: color 0.2s;
+            white-space: nowrap;
         }
 
         .phone-link:hover {
@@ -158,14 +163,14 @@
             background: none;
             border: 2px solid var(--border);
             color: var(--text-main);
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: 0.2s;
         }
 
@@ -179,20 +184,21 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
-            background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)), 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), 
                         url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') no-repeat center center / cover;
             color: #fff;
-            padding-top: 80px;
+            padding-top: 100px;
+            padding-bottom: 60px;
         }
 
         .hero-content { max-width: 750px; }
-        .hero h1 { font-size: 3.5rem; line-height: 1.2; margin-bottom: 25px; text-transform: uppercase; }
-        .hero p { font-size: 1.2rem; margin-bottom: 40px; color: #e0e0e0; }
+        .hero h1 { font-size: 3.2rem; line-height: 1.2; margin-bottom: 25px; text-transform: uppercase; }
+        .hero p { font-size: 1.2rem; margin-bottom: 40px; color: #e0e0e0; line-height: 1.6; }
 
         /* --- СЕТКИ И КАРТОЧКИ --- */
         .grid-3 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
         }
 
@@ -224,61 +230,69 @@
         .img-zamer { background-image: url('https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=600&q=80'); }
 
         .card-body { padding: 25px; }
-        .card-body h3 { font-size: 1.3rem; margin-bottom: 15px; text-transform: uppercase; }
+        .card-body h3 { font-size: 1.25rem; margin-bottom: 12px; text-transform: uppercase; }
         .card-body p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
         /* --- БЛОК ПРЕИМУЩЕСТВА --- */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
             text-align: center;
         }
 
-        .feature-item .icon { font-size: 3rem; color: var(--accent); margin-bottom: 15px; }
+        .feature-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 30px 20px;
+            border-radius: 6px;
+        }
+        .feature-item .icon { font-size: 2.8rem; color: var(--accent); margin-bottom: 15px; }
         .feature-item h4 { font-size: 1.2rem; margin-bottom: 10px; }
-        .feature-item p { color: var(--text-muted); font-size: 0.9rem; }
+        .feature-item p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
 
         /* --- ГАЛЕРЕЯ РАБОТ --- */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
+            gap: 20px;
         }
 
         .gallery-item {
-            height: 260px;
+            height: 280px;
             background-size: cover;
             background-position: center;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         .gallery-item::after {
             content: '🔍 Увеличить объект';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 107, 0, 0.85);
+            background: rgba(255, 107, 0, 0.9);
             color: #fff;
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: 0.3s; font-weight: bold;
+            opacity: 0; transition: 0.3s; font-weight: bold; font-size: 1.1rem;
         }
 
         .gallery-item:hover::after { opacity: 1; }
 
         /* --- МОДАЛЬНОЕ ОКНО ДЛЯ ПРОСМОТРА КАРТИНОК --- */
         .modal {
-            display: none; /* Изначально скрыто */
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 2000;
             justify-content: center;
             align-items: center;
             opacity: 0;
             transition: opacity 0.3s ease;
+            padding: 10px;
         }
 
         .modal.show {
@@ -287,10 +301,11 @@
         }
 
         .modal-content {
-            max-width: 85%;
+            max-width: 95%;
             max-height: 85%;
+            object-fit: contain;
             border-radius: 4px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
             transform: scale(0.9);
             transition: transform 0.3s ease;
         }
@@ -301,13 +316,14 @@
 
         .modal-close {
             position: absolute;
-            top: 20px; right: 30px;
+            top: 15px; right: 20px;
             color: #fff;
-            font-size: 40px;
-            font-weight: bold;
+            font-size: 45px;
+            font-weight: 300;
             cursor: pointer;
             transition: 0.2s;
             user-select: none;
+            z-index: 2100;
         }
 
         .modal-close:hover {
@@ -318,19 +334,20 @@
         footer {
             background: #111113;
             color: #fff;
-            padding: 80px 0 30px 0;
+            padding: 60px 0 30px 0;
             border-top: 1px solid #2a2a30;
         }
 
         .footer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 50px;
+            gap: 40px;
             margin-bottom: 40px;
         }
 
-        .footer-info h3 { margin-bottom: 25px; color: var(--accent); text-transform: uppercase; }
-        .footer-info p { margin-bottom: 12px; color: #a0a5ab; display: flex; align-items: center; gap: 10px; font-size: 1.05rem; }
+        .footer-info h3 { margin-bottom: 20px; color: var(--accent); text-transform: uppercase; font-size: 1.4rem; }
+        .footer-info h4 { margin-bottom: 20px; color: #fff; text-transform: uppercase; font-size: 1.1rem; }
+        .footer-info p { margin-bottom: 14px; color: #a0a5ab; line-height: 1.5; font-size: 1rem; }
         .footer-info a { color: #fff; text-decoration: none; transition: color 0.2s; font-weight: 600; }
         .footer-info a:hover { color: var(--accent); }
         
@@ -340,6 +357,7 @@
             border-radius: 6px;
             overflow: hidden;
             border: 1px solid #2a2a30;
+            margin-top: 10px;
         }
 
         .footer-bottom {
@@ -350,28 +368,101 @@
             font-size: 0.9rem;
         }
 
-        /* --- АДАПТИВНОСТЬ ДЛЯ СМАРТФОНОВ --- */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.3rem; }
-            .section-title { font-size: 1.9rem; }
-            section { padding: 60px 0; }
-            .modal-close { top: 15px; right: 20px; font-size: 35px; }
+        /* 
+        ====================================================
+        ОПТИМИЗАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ (АДАПТИВНОСТЬ)
+        ====================================================
+        */
+        @media (max-width: 850px) {
+            /* Перестраиваем шапку, чтобы всё влезло */
+            .header-inner {
+                height: auto;
+                padding: 15px 0;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .phone-link {
+                font-size: 1rem;
+            }
+
+            .header-right .btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            /* Сдвигаем главный экран вниз, чтобы шапка его не перекрывала */
+            .hero {
+                padding-top: 160px;
+                min-height: auto;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                margin-bottom: 30px;
+            }
+
+            section {
+                padding: 50px 0;
+            }
+
+            .section-title {
+                font-size: 1.7rem;
+                margin-bottom: 30px;
+            }
+
+            /* Включаем постоянную подсказку "Кликни" для мобилок на галерее, так как ховера там нет */
+            .gallery-item::after {
+                opacity: 0.3;
+                background: rgba(0,0,0,0.4);
+                content: '🔍 Открыть';
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+            .logo {
+                font-size: 1.3rem;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr; /* На мелких экранах строго в 1 колонку */
+            }
         }
     </style>
 </head>
 <body data-theme="dark">
 
+    <!-- ШАПКА САЙТА -->
     <header>
         <div class="container header-inner">
             <div class="logo">Сталь<span>Монтаж</span></div>
             <div class="header-right">
                 <a href="tel:+79605540757" class="phone-link">+7 (960) 554-07-57</a>
                 <button class="theme-switch" id="theme-toggle" title="Сменить тему">☀️</button>
-                <a href="#footer" class="btn">Связаться с нами</a>
+                <a href="#footer" class="btn">Контакты</a>
             </div>
         </div>
     </header>
 
+    <!-- ГЛАВНЫЙ ЭКРАН -->
     <section class="hero" id="hero">
         <div class="container">
             <div class="hero-content wind-fade">
@@ -382,6 +473,7 @@
         </div>
     </section>
 
+    <!-- БЛОК НАШИ ИЗДЕЛИЯ -->
     <section id="products">
         <div class="container">
             <h2 class="section-title wind-fade">Наши <span>изделия</span></h2>
@@ -411,6 +503,7 @@
         </div>
     </section>
 
+    <!-- БЛОК УСЛУГИ -->
     <section id="services" style="background: var(--bg-card); transition: background 0.4s;">
         <div class="container">
             <h2 class="section-title wind-fade">Наши <span>Услуги</span></h2>
@@ -440,6 +533,7 @@
         </div>
     </section>
 
+    <!-- ПРЕИМУЩЕСТВА -->
     <section id="features">
         <div class="container">
             <h2 class="section-title wind-fade">Почему выбирают <span>нас</span></h2>
@@ -468,6 +562,7 @@
         </div>
     </section>
 
+    <!-- ГАЛЕРЕЯ РАБОТ -->
     <section id="gallery" style="background: var(--bg-card); transition: background 0.4s;">
         <div class="container">
             <h2 class="section-title wind-fade">Галерея <span>работ</span></h2>
@@ -479,11 +574,13 @@
         </div>
     </section>
 
+    <!-- ВСПЛЫВАЮЩЕЕ (МОДАЛЬНОЕ) ОКНО ДЛЯ ГАЛЕРЕИ -->
     <div class="modal" id="gallery-modal">
         <span class="modal-close" id="modal-close">&times;</span>
         <img class="modal-content" id="modal-img" src="" alt="Увеличенный объект">
     </div>
 
+    <!-- ПОДВАЛ (ФУТЕР) С КОНТАКТАМИ И КАРТОЙ -->
     <footer id="footer">
         <div class="container footer-grid">
             <div class="footer-info">
@@ -495,7 +592,7 @@
                 <h4>Контакты</h4>
                 <p>📞 Тел: <a href="tel:+79605540757">+7 (960) 554-07-57</a></p>
                 <p>✉️ Email: <a href="mailto:apolohov900@mail.ru">apolohov900@mail.ru</a></p>
-                <p>📍 Адрес: Брянская область, Брянский район, д. Добрунь, д. 34</p>
+                <p>📍 Адрес: Брянская область, д. Добрунь, д. 34</p>
             </div>
             <div class="footer-info">
                 <h4>Наше местоположение</h4>
@@ -503,10 +600,11 @@
             </div>
         </div>
         <div class="footer-bottom">
-            Все интерактивные элементы и галерея настроены.
+            Сайт полностью оптимизирован для компьютеров и мобильных.
         </div>
     </footer>
 
+    <!-- СКРИПТЫ -->
     <script>
         // 1. ПЕРЕКЛЮЧАТЕЛЬ СВЕТЛОЙ И ТЁМНОЙ ТЕМЫ
         const themeToggle = document.getElementById('theme-toggle');
@@ -527,7 +625,7 @@
         const observerOptions = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.12
+            threshold: 0.08 // Немного снизили порог для лучшего срабатывания на мобилках
         };
 
         const windObserver = new IntersectionObserver((entries, observer) => {
@@ -550,7 +648,6 @@
 
         document.querySelectorAll('.gallery-item').forEach(item => {
             item.addEventListener('click', () => {
-                // Извлекаем чистую ссылку на картинку из стиля background-image
                 const bgStyle = window.getComputedStyle(item).backgroundImage;
                 const imgUrl = bgStyle.slice(5, -2).replace(/"/g, "");
                 
@@ -559,12 +656,10 @@
             });
         });
 
-        // Закрытие на крестик
         modalClose.addEventListener('click', () => {
             modal.classList.remove('show');
         });
 
-        // Закрытие по клику на темную область вокруг картинки
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('show');
